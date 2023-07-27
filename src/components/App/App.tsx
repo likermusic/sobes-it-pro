@@ -9,7 +9,7 @@ import type { MenuProps } from 'antd';
 import { Layout, Menu, theme, Switch, Col, Row   } from 'antd';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Article from '../Article/Article';
-
+import Filter from '../Filter/Filter';
 interface ArticleData {
   title: string;
   publishedAt: string;
@@ -29,6 +29,7 @@ interface ColumnsProps {
 interface AppContextProps {
   columns:ColumnsProps[];
   setColumns: React.Dispatch<SetStateAction<ColumnsProps[]>>;
+  data: ArticleData[];
   // Add additional properties if necessary
 }
 
@@ -140,8 +141,8 @@ const App: React.FC = () => {
   // const modifiedColumns = changeColumns(columns);
 
   return (
-    <AppContext.Provider value={{columns, setColumns}}>
-      
+    <AppContext.Provider value={{columns, setColumns, data}}>
+      {/* Тут data передавать в контекст */}
 
       <BrowserRouter>
       <Routes>
@@ -151,7 +152,9 @@ const App: React.FC = () => {
                 <Menu theme="dark" mode="inline" items={items}/>
             </Sider>
             <Layout >
-              <Header style={{ padding: 0, background: colorBgContainer }} />
+              <Header style={{ padding: 0, background: colorBgContainer }} >
+                  <Filter/>
+              </Header>
               <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
               
                   <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
