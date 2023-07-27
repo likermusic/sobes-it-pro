@@ -14,3 +14,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* .ant-table-tbody td:last-child {
+  width: 20px;
+  /* padding: 1rem; }*/
+ 
+.ant-table-tbody .ant-table-cell .my-crop {
+  padding: 10px;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  display: inline-block;
+  max-width: 40vw;
+}
