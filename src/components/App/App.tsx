@@ -30,6 +30,10 @@ interface AppContextProps {
   columns:ColumnsProps[];
   setColumns: React.Dispatch<SetStateAction<ColumnsProps[]>>;
   data: ArticleData[];
+  setData: React.Dispatch<SetStateAction<ArticleData[]>>;
+  filter: Record<string, string>;
+  setFilter:React.Dispatch<SetStateAction<Record<string, string>>>;
+  filteredData: ArticleData[];
   // Add additional properties if necessary
 }
 
@@ -51,7 +55,7 @@ let initColumns: ColumnsProps[] = [
     title: 'Published At',
     dataIndex: 'publishedAt',
     key: 'publishedAt',
-    checked:false
+    checked:true
   },
   {
     title: 'Description',
@@ -67,7 +71,7 @@ let initColumns: ColumnsProps[] = [
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
 
-const App: React.FC = () => {
+function App () {
 
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -75,6 +79,7 @@ const App: React.FC = () => {
   } = theme.useToken();
   const [data, setData] = useState<ArticleData[] | []>([]);
   const [columns, setColumns] = useState(initColumns);
+  const [filter, setFilter] = useState<Record<string,string>>({sort: 'new', search: ''});
 
   function switchColumn (checked: boolean, index: number) {    
     setColumns((prev)=> {
@@ -107,18 +112,18 @@ const App: React.FC = () => {
     setData( [
       {title: 'sd11', description: 'aaasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', publishedAt: '12-12-12'},
       {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
+      {title: 'dss333', description: 'ccc', publishedAt: '12-12-11'},
       {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
+      {title: 'ds22', description: 'bb', publishedAt: '12-12-23'},
       {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-      {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-      {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-      {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
+      {title: 'sd11', description: 'aaa', publishedAt: '12-12-10'},
+      {title: 'ds22', description: 'bb', publishedAt: '10-12-12'},
+      {title: 'dss333', description: 'ccc', publishedAt: '19-12-12'},
+      {title: 'sd11', description: 'aaa', publishedAt: '11-12-12'},
+      {title: 'ds22', description: 'bb', publishedAt: '12-11-12'},
+      {title: 'dss333', description: 'ccc', publishedAt: '12-05-12'},
+      {title: 'sd11', description: 'aaa', publishedAt: '12-02-12'},
+      {title: 'ds22', description: 'bb', publishedAt: '12-01-12'},
       {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
     ])
   }, []); 
@@ -139,9 +144,15 @@ const App: React.FC = () => {
   //   return 
   // }
   // const modifiedColumns = changeColumns(columns);
+  function filterHandler(data: ArticleData[]) {
+    return data.filter( el => {
+      return el.title.toLowerCase().includes(filter.search.toLowerCase());
+    })    
+  }
+  const filteredData = filterHandler(data);
 
   return (
-    <AppContext.Provider value={{columns, setColumns, data}}>
+    <AppContext.Provider value={{columns, setColumns, data, setData, filter, setFilter, filteredData}}>
       {/* Тут data передавать в контекст */}
 
       <BrowserRouter>
@@ -159,7 +170,7 @@ const App: React.FC = () => {
               
                   <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
                     
-                    <NewsTable data={data}/>
+                    <NewsTable/>
                   </div>
             
               </Content>

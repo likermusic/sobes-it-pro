@@ -29,14 +29,15 @@ interface AppContextProps {
   // Add additional properties if necessary
 }
 
-function NewsTable({ data }: NewsTableProps) {
+function NewsTable() {
   const appContext = useContext(AppContext);
 
   if (!appContext) {
     return null; // You can return an empty state or a loading spinner
   }
   
-  const dataSource = data.map((el, ind) => {
+  const { columns, setColumns, filteredData } = appContext;
+  const dataSource = filteredData.map((el, ind) => {
     return {
       key: `${ind}`,
       title: el.title,
@@ -45,7 +46,6 @@ function NewsTable({ data }: NewsTableProps) {
       more: (<Link to={`/${ind}`}>Читать далее</Link>)
     }
   });
-  const { columns, setColumns } = appContext;
   
   const arr = columns.filter(col=>col.checked);
 
