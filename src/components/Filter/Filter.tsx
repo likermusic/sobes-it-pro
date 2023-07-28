@@ -1,6 +1,6 @@
 import { AudioOutlined } from '@ant-design/icons';
 import { Input, Space, Select, Row, Col } from 'antd';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {AppContext} from '../App/App';
 const { Search } = Input;
 
@@ -16,30 +16,26 @@ const suffix = (
 
 
 function Filter() { 
+  const [searchValue, setSearchValue] = useState('');
  const appContext = useContext(AppContext);
  if (!appContext) {
   return null;
  }
 const {filter, setFilter} = appContext;
 
+{/* <string></string> */}
 function sortChangeHandler(value: string) {
   setFilter( (prev) => ({
     sort: value,
     search: prev.search
   }))
 };
-function onSearch (value: string) {
-  console.log(123);
-  
-  
-  
-}
-function searchChangeHandler(value: string) {
+
+function onSearch(value: string) {
   setFilter( (prev) => ({
     sort: prev.sort,
     search: value
   }));
-  
 }
   return (
     <Row align="middle" justify="space-around">
@@ -56,7 +52,7 @@ function searchChangeHandler(value: string) {
       />
       </Col>
       <Col span={7} offset={5}>
-        <Search style={{verticalAlign:'middle'}} placeholder="Искать по заголовку" value={filter.search} onChange={(e:React.ChangeEvent<HTMLInputElement>) =>searchChangeHandler(e.target.value)} onSearch={onSearch} enterButton />
+        <Search style={{verticalAlign:'middle'}} placeholder="Искать по заголовку" onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} onSearch={onSearch} enterButton />
       </Col> 
 
     </Row>

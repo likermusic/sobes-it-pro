@@ -39,11 +39,11 @@ function NewsTable() {
   const { columns, setColumns, filteredData } = appContext;
   const dataSource = filteredData.map((el, ind) => {
     return {
-      key: `${ind}`,
+      key: el.id,
       title: el.title,
       publishedAt: el.publishedAt,
       description: el.description,
-      more: (<Link to={`/${ind}`}>Читать далее</Link>)
+      more: (<Link to={`/${el.id}`}>Читать далее</Link>)
     }
   });
   
@@ -65,7 +65,8 @@ function NewsTable() {
     <Table dataSource={dataSource} columns={arr}/>
 
     :
-    <div style={{height:'100vh',fontSize:'26px'}}>Информация скрыта</div>
+    // <div style={{height:'100vh',fontSize:'26px'}}>Информация скрыта</div>
+    <Table  columns={arr}/>
   );
 }
 

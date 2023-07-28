@@ -10,10 +10,12 @@ import { Layout, Menu, theme, Switch, Col, Row   } from 'antd';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Article from '../Article/Article';
 import Filter from '../Filter/Filter';
+import axios, {AxiosResponse} from 'axios'
 interface ArticleData {
   title: string;
   publishedAt: string;
   description: string;
+  id: string;
   // Add additional properties if necessary
 }
 
@@ -104,39 +106,67 @@ function App () {
            ),
   }));
 
-
+  interface Article {
+    content: string;
+    description: string;
+    publishedAt: string;
+    source: {
+      id: string;
+      name: string;
+    };
+    title: string;
+    urlToImage: string;
+    url: string;
+  }
   useEffect(() => {
-    // axios.get('https://newsapi.org/v2/everything?q=tesla&from=2023-06-26&sortBy=publishedAt&apiKey=3931aff55dc141dbb2c859626616e540')
+    // https://saurav.tech/NewsAPI/sources.json
+    // axios.get<Article[]>('https://newsapi.org/v2/everything?q=tesla&from=2023-06-26&sortBy=publishedAt&apiKey=3931aff55dc141dbb2c859626616e540')
     //   .then(({ data }) => setData(data.articles));
+    // <{sources:Article[]}>
+    // <[articles:Article[]]>
+  
+    // axios.get<{ data: { status: string, totalResults: number, articles: Article[] } }>('https://saurav.tech/NewsAPI/everything/cnn.json')
+    // .then(( resp:AxiosResponse<{ data: { status: string, totalResults: number, articles: Article[] } }> ) => console.log(resp.data.articles));
 
-    setData( [
-      {title: 'sd11', description: 'aaasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', publishedAt: '12-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-12-11'},
-      {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-12-23'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-      {title: 'sd11', description: 'aaa', publishedAt: '12-12-10'},
-      {title: 'ds22', description: 'bb', publishedAt: '10-12-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '19-12-12'},
-      {title: 'sd11', description: 'aaa', publishedAt: '11-12-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-11-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-05-12'},
-      {title: 'sd11', description: 'aaa', publishedAt: '12-02-12'},
-      {title: 'ds22', description: 'bb', publishedAt: '12-01-12'},
-      {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-    ])
+    // axios.get<{ data: { status: string, totalResults: number, articles: Article[] } }>('https://saurav.tech/NewsAPI/everything/cnn.json')
+    // .then((response: AxiosResponse<{ data: { status: string, totalResults: number, articles: Article[] } }>) => {
+    //   if (response.data && response.data.articles) {
+    //   console.log(response.data.articles); // Объект с данными articles
+    //   }
+    // });
+/*
+    NEWSAPI
+    https://github.com/SauravKanchan/NewsAPI
+*/
+    axios.get('https://saurav.tech/NewsAPI/everything/cnn.json')
+    .then(   (response: AxiosResponse) => {
+      const data = response.data.articles.map( (el:Article, ind: number) => {
+       return {id:String(ind+1), title:el.title,description:el.description,publishedAt:new Date(el.publishedAt).toLocaleString()}
+      })
+      setData(data);
+      
+    });
+
+
+      // setData(data.articles)
+    // setData( [
+    //   {title: 'sd11', description: 'aaasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', publishedAt: '12-12-12'},
+    //   {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
+    //   {title: 'dss333', description: 'ccc', publishedAt: '12-12-11'},
+    //   {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
+    //   {title: 'ds22', description: 'bb', publishedAt: '12-12-23'},
+    //   {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
+    //   {title: 'sd11', description: 'aaa', publishedAt: '12-12-10'},
+    //   {title: 'ds22', description: 'bb', publishedAt: '10-12-12'},
+    //   {title: 'dss333', description: 'ccc', publishedAt: '19-12-12'},
+    //   {title: 'sd11', description: 'aaa', publishedAt: '11-12-12'},
+    //   {title: 'ds22', description: 'bb', publishedAt: '12-11-12'},
+    //   {title: 'dss333', description: 'ccc', publishedAt: '12-05-12'},
+    //   {title: 'sd11', description: 'aaa', publishedAt: '12-02-12'},
+    //   {title: 'ds22', description: 'bb', publishedAt: '12-01-12'},
+    //   {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
+    // ])
   }, []); 
-
-
-  
-
-  
-  
-
-
-
-  
 
   // function changeColumns(columns: ColumnsProps[]):ColumnsProps[] {
   //   const copy = [...columns];
@@ -144,12 +174,24 @@ function App () {
   //   return 
   // }
   // const modifiedColumns = changeColumns(columns);
-  function filterHandler(data: ArticleData[]) {
+  function filterHandler(data: ArticleData[], filter: Record<string,string>) {
+      data.sort((a:any, b: any) => {
+      let aDate = new Date(a.publishedAt).getTime();
+      let bDate = new Date(b.publishedAt).getTime();
+      if (filter.sort == 'new') {
+        return bDate - aDate;
+      } else {
+        return aDate - bDate;
+      } 
+    })
+    // console.log(arr);
+    
+
     return data.filter( el => {
       return el.title.toLowerCase().includes(filter.search.toLowerCase());
     })    
   }
-  const filteredData = filterHandler(data);
+  const filteredData = filterHandler(data, filter);
 
   return (
     <AppContext.Provider value={{columns, setColumns, data, setData, filter, setFilter, filteredData}}>
@@ -158,7 +200,8 @@ function App () {
       <BrowserRouter>
       <Routes>
                 <Route path='/' element={
-         <Layout hasSider>
+        //  <Layout hasSider>
+        <Layout style={{ minHeight: '100vh' }}>
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <Menu theme="dark" mode="inline" items={items}/>
             </Sider>
