@@ -6,11 +6,12 @@ import {
   EditOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme, Switch, Col, Row   } from 'antd';
+import { Layout, Menu, theme, Switch, Col, Row,Spin,Alert   } from 'antd';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Article from '../Article/Article';
 import Filter from '../Filter/Filter';
 import axios, {AxiosResponse} from 'axios'
+import { setTimeout } from 'timers/promises';
 interface ArticleData {
   title: string;
   publishedAt: string;
@@ -48,19 +49,19 @@ const { Header, Content, Footer, Sider } = Layout;
 
 let initColumns: ColumnsProps[] = [
   {
-    title: 'Title',
+    title: 'Заголовок',
     dataIndex: 'title',
     key: 'title',
     checked:true
   },
   {
-    title: 'Published At',
+    title: 'Дата',
     dataIndex: 'publishedAt',
     key: 'publishedAt',
     checked:true
   },
   {
-    title: 'Description',
+    title: 'Описание',
     dataIndex: 'description',
     key: 'description',
     checked:true,
@@ -82,6 +83,9 @@ function App () {
   const [data, setData] = useState<ArticleData[] | []>([]);
   const [columns, setColumns] = useState(initColumns);
   const [filter, setFilter] = useState<Record<string,string>>({sort: 'new', search: ''});
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   function switchColumn (checked: boolean, index: number) {    
     setColumns((prev)=> {
@@ -118,6 +122,8 @@ function App () {
     urlToImage: string;
     url: string;
   }
+
+
   useEffect(() => {
     // https://saurav.tech/NewsAPI/sources.json
     // axios.get<Article[]>('https://newsapi.org/v2/everything?q=tesla&from=2023-06-26&sortBy=publishedAt&apiKey=3931aff55dc141dbb2c859626616e540')
@@ -130,43 +136,33 @@ function App () {
 
     // axios.get<{ data: { status: string, totalResults: number, articles: Article[] } }>('https://saurav.tech/NewsAPI/everything/cnn.json')
     // .then((response: AxiosResponse<{ data: { status: string, totalResults: number, articles: Article[] } }>) => {
-    //   if (response.data && response.data.articles) {
-    //   console.log(response.data.articles); // Объект с данными articles
-    //   }
+      //   if (response.data && response.data.articles) {
+        //   console.log(response.data.articles); // Объект с данными articles
+        //   }
     // });
 /*
     NEWSAPI
     https://github.com/SauravKanchan/NewsAPI
 */
-    axios.get('https://saurav.tech/NewsAPI/everything/cnn.json')
-    .then(   (response: AxiosResponse) => {
-      const data = response.data.articles.map( (el:Article, ind: number) => {
-       return {id:String(ind+1), title:el.title,description:el.description,publishedAt:new Date(el.publishedAt).toLocaleString()}
-      })
-      setData(data);
+setIsLoading(true);
+axios.get('https://saurav.tech/NewsAPI/everything/cnn.json')
+.then(   (response: AxiosResponse) => {
+  const data = response.data.articles.map( (el:Article, ind: number) => {
+    return {id:String(ind+1), title:el.title,description:el.description,publishedAt:new Date(el.publishedAt).toLocaleString()}
+  })
+  setData(data);
       
-    });
+  }).then(() => {
+    setIsLoading(false);  
+  })
+  .catch((e) => {
+    setIsLoading(false);
+    setIsError(true);
+  });
 
-
-      // setData(data.articles)
-    // setData( [
-    //   {title: 'sd11', description: 'aaasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', publishedAt: '12-12-12'},
-    //   {title: 'ds22', description: 'bb', publishedAt: '12-12-12'},
-    //   {title: 'dss333', description: 'ccc', publishedAt: '12-12-11'},
-    //   {title: 'sd11', description: 'aaa', publishedAt: '12-12-12'},
-    //   {title: 'ds22', description: 'bb', publishedAt: '12-12-23'},
-    //   {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-    //   {title: 'sd11', description: 'aaa', publishedAt: '12-12-10'},
-    //   {title: 'ds22', description: 'bb', publishedAt: '10-12-12'},
-    //   {title: 'dss333', description: 'ccc', publishedAt: '19-12-12'},
-    //   {title: 'sd11', description: 'aaa', publishedAt: '11-12-12'},
-    //   {title: 'ds22', description: 'bb', publishedAt: '12-11-12'},
-    //   {title: 'dss333', description: 'ccc', publishedAt: '12-05-12'},
-    //   {title: 'sd11', description: 'aaa', publishedAt: '12-02-12'},
-    //   {title: 'ds22', description: 'bb', publishedAt: '12-01-12'},
-    //   {title: 'dss333', description: 'ccc', publishedAt: '12-12-12'},
-    // ])
   }, []); 
+
+
 
   // function changeColumns(columns: ColumnsProps[]):ColumnsProps[] {
   //   const copy = [...columns];
@@ -192,7 +188,17 @@ function App () {
     })    
   }
   const filteredData = filterHandler(data, filter);
-
+  if (isError) {
+    return (
+      <Alert
+      message="Ошибка"
+      description="Попробуйте позже!"
+      type="error"
+      showIcon
+      style={{ width: 600, position:'absolute', left: '50%', top:'50%', transform: 'translate(-50%,-50%)', textAlign:'center'}}
+    />
+    )
+  }
   return (
     <AppContext.Provider value={{columns, setColumns, data, setData, filter, setFilter, filteredData}}>
       {/* Тут data передавать в контекст */}
@@ -209,13 +215,15 @@ function App () {
               <Header style={{ padding: 0, background: colorBgContainer }} >
                   <Filter/>
               </Header>
-              <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-              
-                  <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
-                    
-                    <NewsTable/>
-                  </div>
-            
+              <Content style={{margin: '24px 16px 0', overflow: 'initial' }}>
+                {isLoading ? 
+                (<Spin style={{marginTop:'40px'}} tip="Loading" size="large">
+                  <div className="content" />
+                </Spin>) :
+                (<div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>   
+                  <NewsTable/>
+                </div>)
+                }
               </Content>
             </Layout>
          </Layout> 
