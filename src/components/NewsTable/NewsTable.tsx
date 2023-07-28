@@ -1,45 +1,22 @@
 import React, { useContext, useState, SetStateAction } from 'react'
-import { Table } from 'antd';
 import { AppContext } from '../App/App';
+
+import { Table } from 'antd';
 import {Link} from 'react-router-dom';
-
-interface ArticleData {
-  title: string;
-  publishedAt: string;
-  description: string;
-  // more: string;
-  // Add additional properties if necessary
-}
-
-interface NewsTableProps {
-  data: ArticleData[] | []; // Update the type here
-}
-
-interface ColumnsProps {
-  title: string;
-  dataIndex: string;
-  key: string;
-  checked?:boolean;
-  // Add additional properties if necessary
-}
-
-interface AppContextProps {
-  columns: ColumnsProps[];
-  setColumns: React.Dispatch<SetStateAction<ColumnsProps[]>>;
-  // Add additional properties if necessary
-}
+import {ArticleData, NewsTableProps, ColumnsProps} from '../../types'
 
 function NewsTable() {
   const appContext = useContext(AppContext);
 
   if (!appContext) {
-    return null; // You can return an empty state or a loading spinner
+    return null;
   }
   
   const { columns, setColumns, filteredData } = appContext;
   const dataSource = filteredData.map((el, ind) => {
     return {
       key: el.id,
+      id: el.id,
       title: el.title,
       publishedAt: el.publishedAt,
       description: el.description,
@@ -61,11 +38,8 @@ function NewsTable() {
     
   return (
     arr.length > 0  ?
-    // <Table dataSource={dataSource} columns={columns.filter(col=>col.checked)}/>
     <Table dataSource={dataSource} columns={arr}/>
-
     :
-    // <div style={{height:'100vh',fontSize:'26px'}}>Информация скрыта</div>
     <Table  columns={arr}/>
   );
 }

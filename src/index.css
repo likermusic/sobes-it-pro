@@ -5,19 +5,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* width: 100vw; */
-  /* height: 100vh; */
-  /* overflow: hidden; */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-/* .ant-table-tbody td:last-child {
-  width: 20px;
-  /* padding: 1rem; }*/
  
 .ant-table-tbody .ant-table-cell .my-crop {
   padding: 10px;
